@@ -30,28 +30,27 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 		return []
 	})
 
-  const validateStock = async (id: number, quatidade: number) => {
-    const stock = await api.get<Stock>(`/stock/${id}`)
-    const product = stock.data
+	const validateStock = async (id: number, quantity: number) => {
+		const stock = await api.get<Stock>(`/stock/${id}`)
+		const product = stock.data
 
-    if (product.amount < quatidade) {
-      toast.error('Quantidade solicitada fora de estoque');
-      return false
-    }
+		if (product.amount < quantity) {
+			toast.error("Quantidade solicitada fora de estoque")
+			return false
+		}
 
-    return true
-  }
+		return true
+	}
 
 	const addProduct = async (productId: number) => {
 		try {
-      const res = await api.get<ProductAPI>(`/products/${productId}`)
-      const targetProduct = cart.find((p) => p.id === productId) ?? { ...res.data, amount: 0 }
+			const res = await api.get<ProductAPI>(`/products/${productId}`)
+			const targetProduct = cart.find((p) => p.id === productId) ?? { ...res.data, amount: 0 }
 
-      if (!(await validateStock(productId, targetProduct.amount + 1))) return
-      targetProduct.amount += 1
+			if (!(await validateStock(productId, targetProduct.amount + 1))) return
+			targetProduct.amount += 1
 
-      
-      const tempCard = cart.filter(e => e.id !== productId)
+			const tempCard = cart.filter((e) => e.id !== productId)
 			const newCart = [...tempCard, targetProduct]
 
 			localStorage.setItem("@RocketShoes:cart", JSON.stringify(newCart))
@@ -63,6 +62,10 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
 	const removeProduct = (productId: number) => {
 		try {
+			if (!cart.find((p) => p.id === productId)) {
+				Error("Produto não encontrado")
+				return
+			}
 			const newCart = cart.filter((product) => product.id !== productId)
 			setCart(newCart)
 			localStorage.setItem("@RocketShoes:cart", JSON.stringify(newCart))
@@ -73,19 +76,19 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
 	const updateProductAmount = async ({ productId, amount }: UpdateProductAmount) => {
 		try {
-      const targetProduct = cart.find((p) => p.id === productId)
+			const targetProduct = cart.find((p) => p.id === productId)
 
 			if (!targetProduct) return
-      if (!(await validateStock(productId, amount))) return
-			
-			targetProduct.amount = amount
+			if (!(await validateStock(productId, amount))) return
+
+			targetProduct.amount = amount > 0 ? amount : 0
 
 			const newCart = [...cart]
 
 			localStorage.setItem("@RocketShoes:cart", JSON.stringify(newCart))
 			setCart(newCart)
 		} catch {
-      toast.error('Erro na alteração de quantidade do produto');
+			toast.error("Erro na alteração de quantidade do produto")
 		}
 	}
 
