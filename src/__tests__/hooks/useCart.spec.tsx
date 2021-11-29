@@ -212,6 +212,7 @@ describe('useCart Hook', () => {
       id: 2,
       amount: 1,
     });
+    
     apiMock.onGet(`products/${productId}`).reply(200, {
       id: 2,
       title: "Tênis VR Caminhada Confortável Detalhes Couro Masculino",

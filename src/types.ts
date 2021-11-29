@@ -6,6 +6,13 @@ export interface Product {
   amount: number;
 }
 
+export interface ProductAPI {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+}
+
 export interface Stock {
   id: number;
   amount: number;

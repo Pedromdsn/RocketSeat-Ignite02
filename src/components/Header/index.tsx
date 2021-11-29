@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MdShoppingBasket } from 'react-icons/md';
 
@@ -7,9 +7,12 @@ import { Container, Cart } from './styles';
 import { useCart } from '../../hooks/useCart';
 
 const Header = (): JSX.Element => {
-  // const { cart } = useCart();
-  // const cartSize = // TODO;
+  const { cart } = useCart();
+  const [cartSize, setCardSize] = useState(cart.length);
 
+  useEffect(() => {
+    setCardSize(cart.length);
+  }, [cart])
   return (
     <Container>
       <Link to="/">
@@ -20,7 +23,7 @@ const Header = (): JSX.Element => {
         <div>
           <strong>Meu carrinho</strong>
           <span data-testid="cart-size">
-            {/* {cartSize === 1 ? `${cartSize} item` : `${cartSize} itens`} */}
+            {cartSize === 1 ? `${cartSize} item` : `${cartSize} itens`}
           </span>
         </div>
         <MdShoppingBasket size={36} color="#FFF" />
