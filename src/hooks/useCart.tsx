@@ -73,15 +73,14 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
 	const updateProductAmount = async ({ productId, amount }: UpdateProductAmount) => {
 		try {
-      const res = await api.get<ProductAPI>(`/products/${productId}`)
-      const targetProduct = cart.find((p) => p.id === productId) ?? { ...res.data, amount: 0 }
+      const targetProduct = cart.find((p) => p.id === productId)
 
+			if (!targetProduct) return
       if (!(await validateStock(productId, amount))) return
-      targetProduct.amount = amount
+			
+			targetProduct.amount = amount
 
-      
-      const tempCard = cart.filter(e => e.id !== productId)
-			const newCart = [...tempCard, targetProduct]
+			const newCart = [...cart]
 
 			localStorage.setItem("@RocketShoes:cart", JSON.stringify(newCart))
 			setCart(newCart)
